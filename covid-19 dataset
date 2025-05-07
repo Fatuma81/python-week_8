@@ -1,0 +1,55 @@
+# COVID-19 Global Data Tracker
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+# Simulate COVID-19 dataset
+np.random.seed(42)
+dates = pd.date_range(start='2020-03-01', periods=100, freq='D')
+countries = ['USA', 'India', 'Brazil', 'Russia', 'UK']
+data = []
+
+for country in countries:
+    for date in dates:
+        data.append({
+            'Date': date,
+            'Country': country,
+            'Confirmed': np.random.randint(1000, 100000),
+            'Deaths': np.random.randint(10, 3000),
+            'Recovered': np.random.randint(500, 90000)
+        })
+
+df = pd.DataFrame(data)
+
+# Preview the dataset
+df.head()
+
+# Aggregate confirmed cases over time (global)
+df_global = df.groupby('Date')[['Confirmed', 'Deaths', 'Recovered']].sum().reset_index()
+
+# Plot global trends
+plt.figure(figsize=(12, 6))
+sns.lineplot(data=df_global, x='Date', y='Confirmed', label='Confirmed')
+sns.lineplot(data=df_global, x='Date', y='Deaths', label='Deaths')
+sns.lineplot(data=df_global, x='Date', y='Recovered', label='Recovered')
+plt.title('Global COVID-19 Trends Over Time')
+plt.xlabel('Date')
+plt.ylabel('Number of Cases')
+plt.legend()
+plt.tight_layout()
+plt.show()
+# Latest data by country
+latest_date = df['Date'].max()
+df_latest = df[df['Date'] == latest_date]
+
+plt.figure(figsize=(10, 6))
+sns.barplot(data=df_latest, x='Country', y='Confirmed', color='orange', label='Confirmed')
+sns.barplot(data=df_latest, x='Country', y='Deaths', color='red', label='Deaths', alpha=0.6)
+sns.barplot(data=df_latest, x='Country', y='Recovered', color='green', label='Recovered', alpha=0.5)
+plt.title(f'COVID-19 Stats by Country on {latest_date.date()}')
+plt.ylabel('Number of People')
+plt.legend()
+plt.tight_layout()
+plt.show()
